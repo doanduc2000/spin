@@ -22,5 +22,5 @@ if (isset($uri[2])) {
     $spinId = (int) $uri[2];
 }
 $requestMethod = $_SERVER["REQUEST_METHOD"];
-$controller = new SpinController($dbConnection, $requestMethod, $userId);
+$controller = new SpinController($dbConnection, $requestMethod, $spinId);
 $controller->processRequest();

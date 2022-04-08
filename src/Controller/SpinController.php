@@ -22,7 +22,11 @@ class SpinController
     {
         switch ($this->requestMethod) {
             case 'GET':
-                $response = $this->getAllSpin();
+                if ($this->spinId) {
+                    $response = $this->getSpin($this->spinId);
+                } else {
+                    $response = $this->getAllSpin();
+                }
                 break;
             case 'PUT':
                 $response = $this->updateSpin($this->spinId);
@@ -44,17 +48,27 @@ class SpinController
         $response['body'] = json_encode($result);
         return $response;
     }
+    private function getSpin($id)
+    {
+        $result = $this->spinGateway->find($id);
+        if (!$result) {
+            return $this->notFoundResponse();
+        }
+        $response['status_code_header'] = 'HTTP/1.1 200 OK';
+        $response['body'] = json_encode($result);
+        return $response;
+    }
     private function updateSpin($id)
     {
         $result = $this->spinGateway->find($id);
         if (!$result) {
             return $this->notFoundResponse();
         }
-        $input = (array)json_decode(file_get_contents('php://input', TRUE));
+        $input = (array) json_decode(file_get_contents('php://input', TRUE));
         if (!$this->validateSpin($input)) {
             return $this->unprocessableEntityResponse();
         }
-        $this->personGateway->update($id, $input);
+        $this->spinGateway->update($id, $input);
         $response['status_code_header'] = 'HTTP/1.1 200 OK';
         $response['body'] = null;
         return $response;

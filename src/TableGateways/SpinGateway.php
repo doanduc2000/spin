@@ -70,4 +70,3 @@ class SpinGateway
         }
     }
 }
-$spinGateway = new SpinGateway($dbConnection);

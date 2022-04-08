@@ -31,10 +31,9 @@ class SpinGateway
             SELECT 
                *
             FROM
-                person
+                vongquay
             WHERE id = ?;
         ";
-
         try {
             $statement = $this->db->prepare($statement);
             $statement->execute(array($id));
@@ -49,21 +48,16 @@ class SpinGateway
         $statement = "
             UPDATE vongquay
             SET 
-                name = :name,
-                count  = :count,
-                total = :total,
-                url = :url
+                total = :total
             WHERE id = :id;
         ";
         try {
             $statement = $this->db->prepare($statement);
-            $statement->excute(array(
-                'id' => (int)$id,
-                'name' => $input['name'],
-                'count' => $input['count'],
+            $statement->execute(array(
+                'id' => (int) $id,
                 'total' => $input['total'],
-                'url' => $input['url'],
             ));
+            var_dump($statement);
             return $statement->rowCount();
         } catch (\PDOException $e) {
             exit($e->getMessage());

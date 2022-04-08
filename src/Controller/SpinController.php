@@ -46,6 +46,7 @@ class SpinController
         $result = $this->spinGateway->findAll();
         $response['status_code_header'] = 'HTTP/1.1 200 OK';
         $response['body'] = json_encode($result);
+
         return $response;
     }
     private function getSpin($id)
@@ -61,6 +62,8 @@ class SpinController
     private function updateSpin($id)
     {
         $result = $this->spinGateway->find($id);
+
+
         if (!$result) {
             return $this->notFoundResponse();
         }
@@ -75,16 +78,7 @@ class SpinController
     }
     private function validateSpin($input)
     {
-        if (!isset($input['name'])) {
-            return false;
-        }
-        if (!isset($input['count'])) {
-            return false;
-        }
         if (!isset($input['total'])) {
-            return false;
-        }
-        if (!isset($input['url'])) {
             return false;
         }
         return true;

@@ -57,7 +57,6 @@ class SpinGateway
                 'id' => (int) $id,
                 'total' => $input['total'],
             ));
-            var_dump($statement);
             return $statement->rowCount();
         } catch (\PDOException $e) {
             exit($e->getMessage());

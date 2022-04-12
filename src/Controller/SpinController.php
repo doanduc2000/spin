@@ -43,38 +43,54 @@ class SpinController
 
     private function getAllSpin()
     {
-        $result = $this->spinGateway->findAll();
-        $response['status_code_header'] = 'HTTP/1.1 200 OK';
-        $response['body'] = json_encode($result);
+        try {
+            $result = $this->spinGateway->findAll();
+            $response['status_code_header'] = 'HTTP/1.1 200 OK';
+            $response['body'] = json_encode($result);
 
-        return $response;
+            return $response;
+        } catch (\PDOException $e) {
+            $response['status_code_header'] = 'HTTP/1.1 500 Internal Server Error';
+            $response['body'] = json_encode($e);
+            return $response;
+        }
     }
     private function getSpin($id)
     {
-        $result = $this->spinGateway->find($id);
-        if (!$result) {
-            return $this->notFoundResponse();
+        try {
+            $result = $this->spinGateway->find($id);
+            if (!$result) {
+                return $this->notFoundResponse();
+            }
+            $response['status_code_header'] = 'HTTP/1.1 200 OK';
+            $response['body'] = json_encode($result);
+            return $response;
+        } catch (\PDOException $e) {
+            $response['status_code_header'] = 'HTTP/1.1 500 Internal Server Error';
+            $response['body'] = json_encode($e);
+            return $response;
         }
-        $response['status_code_header'] = 'HTTP/1.1 200 OK';
-        $response['body'] = json_encode($result);
-        return $response;
     }
     private function updateSpin($id)
     {
-        $result = $this->spinGateway->find($id);
-
-
-        if (!$result) {
-            return $this->notFoundResponse();
+        try {
+            $result = $this->spinGateway->find($id);
+            if (!$result) {
+                return $this->notFoundResponse();
+            }
+            $input = (array) json_decode(file_get_contents('php://input', TRUE));
+            if (!$this->validateSpin($input)) {
+                return $this->unprocessableEntityResponse();
+            }
+            $this->spinGateway->update($id, $input);
+            $response['status_code_header'] = 'HTTP/1.1 200 OK';
+            $response['body'] = null;
+            return $response;
+        } catch (\PDOException $e) {
+            $response['status_code_header'] = 'HTTP/1.1 500 Internal Server Error';
+            $response['body'] = json_encode($e);
+            return $response;
         }
-        $input = (array) json_decode(file_get_contents('php://input', TRUE));
-        if (!$this->validateSpin($input)) {
-            return $this->unprocessableEntityResponse();
-        }
-        $this->spinGateway->update($id, $input);
-        $response['status_code_header'] = 'HTTP/1.1 200 OK';
-        $response['body'] = null;
-        return $response;
     }
     private function validateSpin($input)
     {
